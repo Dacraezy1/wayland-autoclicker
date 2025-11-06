@@ -21,15 +21,31 @@ This project is built with Rust. You will need the Rust toolchain installed.
 
 ## Usage
 
-The autoclicker is controlled via command-line arguments.
+The autoclicker is controlled via command-line arguments and a toggle key.
+
+**Important:** This program needs to be run with permissions to read input devices and create virtual ones. You will likely need to run it with `sudo`.
 
 ```sh
-./target/release/wayland-autoclicker --interval <MILLISECONDS>
+sudo ./target/release/wayland-autoclicker [OPTIONS]
 ```
 
--   `--interval <MILLISECONDS>`: Sets the time in milliseconds between each click.
+### Options:
 
-*(More options will be added in the future.)*
+-   `--interval <MILLISECONDS>`: Sets the time in milliseconds between each click. (Default: `100`)
+-   `--toggle-key <KEY>`: Specifies the keyboard key to toggle the autoclicker on/off.
+    *   Examples: `F6`, `X`, `BTN_LEFT` (for a mouse button).
+    *   (Default: `F6`)
+-   `--button <BUTTON>`: Specifies which mouse button to click.
+    *   Options: `left`, `right`, `middle`.
+    *   (Default: `left`)
+
+### Example:
+
+To run the autoclicker with a 50ms interval, toggled by the `F8` key, clicking the right mouse button:
+
+```sh
+sudo ./target/release/wayland-autoclicker --interval 50 --toggle-key F8 --button right
+```
 
 ## License
 
