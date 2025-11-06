@@ -1,0 +1,9 @@
+[package]
+name = "wayland-autoclicker"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5.51", features = ["derive"] }
+wayland-client = "0.31.11"
+wayland-protocols = "0.32.9"
