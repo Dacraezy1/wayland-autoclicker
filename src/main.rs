@@ -7,13 +7,14 @@ use std::{
 use wayland_client::{
     protocol::{wl_pointer, wl_registry},
     Connection, Dispatch, QueueHandle,
+    Proxy, // Required for .interface()
 };
 // Corrected import path for virtual pointer
 use wayland_protocols_wlr::virtual_pointer::v1::client::{
     zwlr_virtual_pointer_manager_v1::ZwlrVirtualPointerManagerV1,
     zwlr_virtual_pointer_v1::ZwlrVirtualPointerV1,
 };
-use evdev::{Device, KeyCode};
+use evdev::KeyCode;
 
 /// A powerful and fast autoclicker for Wayland.
 #[derive(Parser, Debug)]
@@ -184,7 +185,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         if device.is_none() {
             eprintln!("No keyboard device found via heuristics.");
-            // Better to warn.
             eprintln!("Warning: Auto-detection failed. Monitoring disabled.");
             return;
         }
@@ -199,10 +199,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("Grabbed input device: {}", device.name().unwrap_or("unnamed"));
 
         loop {
-            // fetch_events blocks, so we don't need sleep
             if let Ok(events) = device.fetch_events() {
                  for event in events {
-                     // destructure() returns EventSummary. Key takes 3 args: (_, key, value)
                     if let evdev::EventSummary::Key(_, key, value) = event.destructure() {
                         if value == 1 && key == toggle_key {
                             let mut enabled = clicking_enabled_clone.lock().unwrap();
@@ -216,7 +214,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     });
 
     // --- Wayland Connection and Clicking Logic (Main Thread) ---
-    // Connect to the Wayland server
     let conn = match Connection::connect_to_env() {
         Ok(c) => c,
         Err(e) => {
@@ -240,11 +237,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let virtual_pointer_manager = app_state
         .virtual_pointer_manager
-        .expect("Compositor does not support zwlr_virtual_pointer_manager_v1. Cannot create virtual pointer. Are you running a wlroots-based compositor (Sway, Hyprland)?");
+        .expect("Compositor does not support zwlr_virtual_pointer_manager_v1. Are you running a wlroots compositor (Sway, Hyprland)?");
 
     // Create the virtual pointer
-    // This interface does not have events, so it takes only the seat argument in 0.31
-    let virtual_pointer = virtual_pointer_manager.create_virtual_pointer(None);
+    // Takes 3 arguments in 0.31: (seat, qhandle, udata)
+    let virtual_pointer = virtual_pointer_manager.create_virtual_pointer(None, &qhandle, ());
 
     println!("Virtual pointer created. Autoclicker ready.");
 
@@ -255,7 +252,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         if enabled {
             // Send button press
-            // Request takes 3 args: (time, button, state)
             virtual_pointer.button(0, mouse_button, wl_pointer::ButtonState::Pressed);
             virtual_pointer.frame(); // Commit the event
             conn.flush()?;
@@ -269,7 +265,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             thread::sleep(click_interval.checked_sub(Duration::from_millis(10)).unwrap_or_default());
         } else {
-            // If not clicking, sleep for a short duration to avoid busy-waiting
             thread::sleep(Duration::from_millis(50));
         }
     }
