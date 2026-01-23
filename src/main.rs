@@ -7,13 +7,13 @@ use std::{
 use wayland_client::{
     protocol::{wl_pointer, wl_registry},
     Connection, Dispatch, QueueHandle,
-    Proxy, // Added Proxy trait import for interface() method
 };
-use wayland_protocols_wlr::unstable::virtual_pointer::v1::client::{
+// Corrected import path for virtual pointer (removed 'unstable')
+use wayland_protocols_wlr::virtual_pointer::v1::client::{
     zwlr_virtual_pointer_manager_v1::ZwlrVirtualPointerManagerV1,
     zwlr_virtual_pointer_v1::ZwlrVirtualPointerV1,
 };
-use evdev::{Device, InputEventKind, KeyCode};
+use evdev::{Device, KeyCode};
 
 /// A powerful and fast autoclicker for Wayland.
 #[derive(Parser, Debug)]
@@ -204,7 +204,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             // fetch_events blocks, so we don't need sleep
             if let Ok(events) = device.fetch_events() {
                  for event in events {
-                    if let InputEventKind::Key(key) = event.kind() {
+                     // destructure() returns EventSummary which simplifies handling
+                    if let evdev::EventSummary::Key(_, key) = event.destructure() {
                         if event.value() == 1 && key == toggle_key {
                             let mut enabled = clicking_enabled_clone.lock().unwrap();
                             *enabled = !*enabled; // Toggle the state
