@@ -78,4 +78,4 @@ sudo ./wayclicker --button right --interval 500
 This tool grabs your keyboard input device to listen for the toggle key. While running, some keys might be intercepted exclusively by the autoclicker depending on the "grab" implementation. To exit the program, you can usually press `Ctrl+C` in the terminal where it is running.
 
 ## License
-MIT / GPLv3
+This project is licensed under the **GNU General Public License v3.0**. See the `LICENSE` file for the full text.
