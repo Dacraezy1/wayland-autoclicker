@@ -3,9 +3,14 @@ name: Build and Release
 on:
   push:
     branches: [ "main", "master" ]
+    tags:
+      - 'v*' # Trigger on tags like v1.0, v0.1.1, etc.
   pull_request:
     branches: [ "main", "master" ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 env:
   CARGO_TERM_COLOR: always
@@ -29,9 +34,25 @@ jobs:
     - name: Build Release
       run: cargo build --release --verbose
 
+    # 1. Zip the binary before uploading (optional, but standard for releases)
+    - name: Package Binary
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        cd target/release
+        tar -czvf wayclicker-linux-x86_64.tar.gz wayclicker
+        cd ../..
+
+    # 2. Upload Artifact to Actions Tab (Always happens on push/pull)
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: wayclicker-binary
         path: target/release/wayclicker
         if-no-files-found: error
+
+    # 3. Create Release and Upload Asset (Only happens on Tags)
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: target/release/wayclicker-linux-x86_64.tar.gz
