@@ -18,38 +18,52 @@ Unlike other Wayland autoclickers that rely on compositor-specific protocols (li
 
 ### Option 1: Download Binary (Recommended)
 1.  Go to the [Releases](https://github.com/Dacraezy1/wayclicker/releases) page (or check the Actions tab if you just forked this).
-2.  Download the `wayclicker` binary.
-3.  Make it executable:
+2.  Extract the folder.
+3.  Ensure both files are executable:
     ```bash
-    chmod +x wayclicker
+    chmod +x wayclicker_gui wayclicker
     ```
-4.  Run it:
+4.  Run the GUI:
+    ```bash
+    ./wayclicker_gui
+    ```
+    Or use the CLI tool:
     ```bash
     sudo ./wayclicker
     ```
 
 ### Option 2: Build from Source
-**Prerequisites:** Rust toolchain.
+**Prerequisites:** Rust toolchain, Flutter SDK
 
 1.  Clone this repository.
-2.  Build:
+2.  Run the provided build script to compile both the Rust backend and Flutter frontend:
     ```bash
-    cargo build --release
+    chmod +x build_release.sh
+    ./build_release.sh
     ```
-3.  Run:
-    ```bash
-    sudo ./target/release/wayclicker
-    ```
+3.  Find your portable build in the `output/` directory.
 
 ## 🎮 Usage
 
 Because `Wayclicker` operates at the kernel level (`/dev/uinput` and `/dev/input/*`), **root privileges (sudo) are required**.
 
+### GUI Mode
+
+Simply launch `wayclicker_gui`.
+
+1.  Set your Click Interval (ms).
+2.  Select your Toggle Key (the key that starts/stops clicking).
+3.  Choose the mouse click to emulate.
+4.  Press START SERVICE. A native system prompt will ask for your password to access the input hardware.
+
+### CLI Mode
+
+You can still run the backend directly via terminal:
 ```bash
 sudo ./wayclicker [OPTIONS]
 ```
 
-### Options
+#### Options
 
 *   `-i, --interval <MS>`: Time in milliseconds between clicks (Default: `100`).
 *   `-t, --toggle-key <KEY>`: The key to toggle clicking on/off (Default: `F6`).
@@ -57,7 +71,7 @@ sudo ./wayclicker [OPTIONS]
 *   `-b, --button <BTN>`: The mouse button to click (Default: `left`).
     *   Options: `left`, `right`, `middle`.
 
-### Examples
+#### Examples
 
 **1. Basic usage (Click every 100ms, toggle with F6):**
 ```bash
@@ -74,7 +88,7 @@ sudo ./wayclicker --interval 25 --toggle-key X
 sudo ./wayclicker --button right --interval 500
 ```
 
-## ⚠️ Important Note
+## ⚠️ Important Note (CLI)
 This tool grabs your keyboard input device to listen for the toggle key. While running, some keys might be intercepted exclusively by the autoclicker depending on the "grab" implementation. To exit the program, you can usually press `Ctrl+C` in the terminal where it is running.
 
 ## License
