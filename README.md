@@ -2,6 +2,14 @@
 
 A powerful, universal autoclicker for Linux. 
 
+## Preview
+<p align="center">
+    <img width="45%" src="https://github.com/user-attachments/assets/56264b44-1bda-4210-826c-318647ae5fe9" />
+&nbsp; &nbsp; &nbsp; &nbsp;
+    <img width="45%" src="https://github.com/user-attachments/assets/2144643c-e7ae-449b-8088-419d82c45569" />
+</p>
+
+
 **Works on ALL desktop environments:**
 *   GNOME (Wayland & X11)
 *   KDE Plasma (Wayland & X11)
@@ -10,6 +18,7 @@ A powerful, universal autoclicker for Linux.
 *   XFCE, Mate, etc.
 
 Created by: **Dacraezy1**
+GUI Created by: **YanamiRei**
 
 ## 🚀 How it Works
 Unlike other Wayland autoclickers that rely on compositor-specific protocols (like `wlr-virtual-pointer`), **Wayclicker** uses the Linux kernel's `uinput` subsystem to create a virtual mouse device. This allows it to work universally across any Linux system, regardless of the display server (Wayland/X11) or compositor.
