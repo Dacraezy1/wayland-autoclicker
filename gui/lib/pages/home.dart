@@ -190,7 +190,9 @@ class _HomePageState extends State<HomePage> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.4),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.black.withAlpha(100)
+                      : Colors.white.withAlpha(255),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.white10),
                 ),
@@ -213,8 +215,8 @@ class _HomePageState extends State<HomePage> {
                       reverse: true,
                       child: Text(
                         snapshot.data!,
-                        style: const TextStyle(
-                          color: Colors.greenAccent,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
                           fontFamily: 'monospace',
                           fontSize: 12,
                         ),
